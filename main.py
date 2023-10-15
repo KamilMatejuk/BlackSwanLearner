@@ -27,11 +27,7 @@ def validate(cls):
   "starting_value": 1000000,
   "start_time": 1503100799999,
   "end_time": 1693180799999,
-  "model_url": {
-    "host": "127.0.0.1",
-    "port": 51002,
-    "slug": ""
-  },
+  "model_url": { "host": "127.0.0.1", "port": 51002, "slug": "" },
   "signals": [
     { "name": "price",
       "url": { "host": "127.0.0.1", "port": 50001, "slug": "/price/range/{asset}/{interval}/{start_time}/{end_time}" } },

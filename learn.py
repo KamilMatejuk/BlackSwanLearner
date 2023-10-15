@@ -17,6 +17,8 @@ def get_signals_for_timerange(signals: list[dict]):
     data = None
     for signal in signals:
         url : URL = signal['url']
+        import sys
+        sys.stderr.write(f'getting url http://{url.host}:{url.port}{url.slug}')
         response = requests.get(f'http://{url.host}:{url.port}{url.slug}')
         assert response.status_code == 200, f'Failed status {response.json()}'
         df = pd.DataFrame(response.json())
