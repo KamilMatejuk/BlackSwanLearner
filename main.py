@@ -27,6 +27,7 @@ def validate(cls):
   "starting_value": 1000000,
   "start_time": 1503100799999,
   "end_time": 1693180799999,
+  "repeat": 1,
   "model_url": { "host": "127.0.0.1", "port": 51002, "slug": "" },
   "signals": [
     { "name": "price",
@@ -49,8 +50,14 @@ def start_learning(data: StartRequest):
     data = parse_urls(data)
     signals = get_signals_for_timerange(data.signals)
     id, results = run_test(signals, data.model_url, data.starting_value)
-    stats = get_stats(id, signals, results, data.starting_value)
-    return stats, 200
+    full_stats = get_stats(id, signals, results, data.starting_value)
+    if data.repeat > 1:
+        full_stats = [full_stats]
+        for _ in range(data.repeat - 1):
+            _, results = run_test(signals, data.model_url, data.starting_value, id)
+            stats = get_stats(id, signals, results, data.starting_value)
+            full_stats.append(stats)
+    return full_stats, 200
 
 
 '''
@@ -61,6 +68,7 @@ def start_learning(data: StartRequest):
   "starting_value": 1000000,
   "start_time": 1503100799999,
   "end_time": 1693180799999,
+  "repeat": 1,
   "model_url": { "host": "127.0.0.1", "port": 51002, "slug": "" },
   "signals": [
     { "name": "price",
@@ -82,9 +90,15 @@ def start_learning(data: StartRequest):
 def continue_learning(data: ContinueRequest):
     data = parse_urls(data)
     signals = get_signals_for_timerange(data.signals)
-    id, results = run_test(signals, data.model_url, data.starting_value, data.id)
-    stats = get_stats(id, signals, results, data.starting_value)
-    return stats, 200
+    _, results = run_test(signals, data.model_url, data.starting_value, data.id)
+    full_stats = get_stats(data.id, signals, results, data.starting_value)
+    if data.repeat > 1:
+        full_stats = [full_stats]
+        for _ in range(data.repeat - 1):
+            _, results = run_test(signals, data.model_url, data.starting_value, data.id)
+            stats = get_stats(data.id, signals, results, data.starting_value)
+            full_stats.append(stats)
+    return full_stats, 200
 
 
 config = Config(RepositoryEnv('.env.local'))

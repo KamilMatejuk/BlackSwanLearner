@@ -1,3 +1,4 @@
+import os
 import json
 import requests
 import numpy as np
@@ -116,7 +117,17 @@ def get_stats(id: str, signals: pd.DataFrame, results: pd.DataFrame, starting: f
         transaction['profit'] = account_value - value
         transactions.append(transaction)
     losses = list(data[['timestamp', 'loss']].T.to_dict().values())
-    data.to_csv(f'data/states_and_results_{id}.csv')
-    with open(f'data/transactions_{id}.json', 'w+') as f:
+    
+    nr = ""
+    if os.path.exists(f'data/states_and_results_{id}.csv') or \
+       os.path.exists(f'data/transactions_{id}.json'):
+        i = 1
+        while os.path.exists(f'data/states_and_results_{id}_{i}.csv') or \
+              os.path.exists(f'data/transactions_{id}_{i}.json'):
+            i += 1
+        nr = f"_{i}"
+
+    data.to_csv(f'data/states_and_results_{id}{nr}.csv')
+    with open(f'data/transactions_{id}{nr}.json', 'w+') as f:
         json.dump(transactions, f)
     return { 'id': id, 'transactions': transactions, 'losses': losses }

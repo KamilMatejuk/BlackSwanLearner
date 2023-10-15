@@ -22,6 +22,7 @@ class StartRequest:
     starting_value: float
     start_time: int
     end_time: int
+    repeat: int
     model_url: URL
     signals: list[dict]
     
@@ -38,6 +39,8 @@ class StartRequest:
             'End time cannot be in the future'
         assert self.start_time < self.end_time, \
             'End time has to be after start time'
+        assert self.repeat > 0, \
+            'Repeat has to be positive value'
         assert len(self.signals) > 0, \
             'Signals for model cannot be empty'
         self.model_url = URL(**self.model_url)

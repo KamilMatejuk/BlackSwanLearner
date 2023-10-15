@@ -87,6 +87,9 @@ components:
         end_time:
           description: e.g. 1634151471 (Unix timestamp 13.10.2021 18:57:51)
           type: integer
+        repeat:
+          description: e.g. 1
+          type: integer
         model_url:
           description: e.g. url to model
           $ref: '#/components/schemas/Url'
