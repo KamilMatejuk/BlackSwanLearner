@@ -106,6 +106,7 @@ def get_stats(id: str, signals: pd.DataFrame, results: pd.DataFrame, starting: f
             transaction['sell_time'] = row['timestamp']
             transaction['sell_price'] = row['price']
             transaction['profit'] = row['value_account'] - value
+            transaction['starting'] = starting
             value = row['value_account']
             transactions.append(transaction)
             transaction = {}
