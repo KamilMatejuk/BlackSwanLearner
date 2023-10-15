@@ -49,6 +49,29 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/InvalidRequest"
+  /stats/{id}:
+    get:
+      operationId: main.stats
+      description: continue learning of existing model by hash id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: statistics about model runs
+          content:
+            application/json:
+              schema:
+                type: object
+        401:
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvalidRequest"
 
 components:
   schemas:

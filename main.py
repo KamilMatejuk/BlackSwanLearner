@@ -1,3 +1,5 @@
+import glob
+import json
 import connexion
 from flask import jsonify
 from decouple import Config, RepositoryEnv
@@ -99,6 +101,23 @@ def continue_learning(data: ContinueRequest):
             stats = get_stats(data.id, signals, results, data.starting_value)
             full_stats.append(stats)
     return full_stats, 200
+
+
+def stats(id: str):
+    try:
+        data = []
+        for file in sorted(glob.glob(f'data/transactions_{id}*.json')):
+            with open(file) as f:
+                transactions = json.load(f)
+            data.append({
+                'number_of_transactions': len(transactions),
+                'number_of_transactions_profit': len([t for t in transactions if t['profit'] > 0]),
+                'number_of_transactions_loss': len([t for t in transactions if t['profit'] < 0]),
+                'overall_profit': 0 if len(transactions) == 0 else sum([t['profit'] for t in transactions]) / transactions[0]['starting'],
+            })
+        return data, 200
+    except Exception as ex:
+        return jsonify({"error": "Invalid request schema", "details": str(ex)}), 401
 
 
 config = Config(RepositoryEnv('.env.local'))

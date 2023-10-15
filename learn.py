@@ -115,6 +115,7 @@ def get_stats(id: str, signals: pd.DataFrame, results: pd.DataFrame, starting: f
         transaction['sell_price'] = data.at[len(data)-1, 'price']
         account_value = data.at[len(data)-1, 'value_assets'] * transaction['sell_price']
         transaction['profit'] = account_value - value
+        transaction['starting'] = starting
         transactions.append(transaction)
     losses = list(data[['timestamp', 'loss']].T.to_dict().values())
     
