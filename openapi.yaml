@@ -1,0 +1,36 @@
+openapi: "3.0.0"
+info:
+  title: API
+  version: '0.1'
+paths:
+  /greeting/{name}:
+    post:
+      operationId: main.hello
+      responses:
+        200:
+          description: greet a new user
+          content:
+            text/plain:
+              schema:
+                type: string
+        401:
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvalidRequest"
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+components:
+  schemas:
+    InvalidRequest:
+      type: object
+      properties:
+        error:
+          type: string
+        details:
+          type: string
