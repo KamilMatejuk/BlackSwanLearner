@@ -1,30 +1,32 @@
 openapi: "3.0.0"
 info:
-  title: API
+  title: Reinforcement Learning API
   version: '0.1'
 paths:
-  /greeting/{name}:
+  /start:
     post:
-      operationId: main.hello
+      operationId: main.start_learning
+      description: start a new learning
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StartRequest"
       responses:
         200:
-          description: greet a new user
+          description: test started correctly
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
+                type: object
         401:
           description: invalid request
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/InvalidRequest"
-      parameters:
-        - name: name
-          in: path
-          required: true
-          schema:
-            type: string
+
 components:
   schemas:
     InvalidRequest:
@@ -34,3 +36,45 @@ components:
           type: string
         details:
           type: string
+    Url:
+      type: object
+      properties:
+        host:
+          type: string
+        port:
+          type: integer
+        slug:
+          type: string
+    StartRequest:
+      type: object
+      properties:
+        asset:
+          description: e.g. BTCUSDT
+          type: string
+        interval:
+          description: e.g. 1m
+          type: string
+        starting_value:
+          description: e.g. 1000000
+          type: number
+          format: float
+        start_time:
+          description: e.g. 1602615471 (Unix timestamp 13.10.2020 18:57:51)
+          type: integer
+        end_time:
+          description: e.g. 1634151471 (Unix timestamp 13.10.2021 18:57:51)
+          type: integer
+        model_url:
+          description: e.g. url to model
+          $ref: '#/components/schemas/Url'
+        signals:
+          description: list of urls to signales expected by model
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                description: e.g. price
+                type: string
+              url:
+                $ref: '#/components/schemas/Url'

@@ -1,5 +1,6 @@
-# Python Template
-This is a template repository for BlackSwan python services, based on SocketIO, with integrated swagger console. To create a new repository from this template, follow [this guide](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template).
+:heavy_exclamation_mark: [Generated from Python Template](https://github.com/KamilMatejuk/BlackSwanPythonTemplate) :heavy_exclamation_mark:
+
+# Reinforcement Learner
 
 ## To start server:
 ```
