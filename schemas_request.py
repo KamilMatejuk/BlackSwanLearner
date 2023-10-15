@@ -46,3 +46,6 @@ class StartRequest:
             s['url'] = URL(**s['url'])
             s['url'].validate('Signal')
 
+@dataclass
+class ContinueRequest(StartRequest):
+    id: str

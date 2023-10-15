@@ -15,7 +15,30 @@ paths:
               $ref: "#/components/schemas/StartRequest"
       responses:
         200:
-          description: test started correctly
+          description: learning started correctly
+          content:
+            application/json:
+              schema:
+                type: object
+        401:
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvalidRequest"
+  /continue:
+    post:
+      operationId: main.continue_learning
+      description: continue learning of existing model by hash id
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ContinueRequest"
+      responses:
+        200:
+          description: learning started correctly
           content:
             application/json:
               schema:
@@ -78,3 +101,11 @@ components:
                 type: string
               url:
                 $ref: '#/components/schemas/Url'
+    ContinueRequest:
+      allOf:
+        - $ref: "#/components/schemas/StartRequest"
+        - type: object
+          properties:
+            id:
+              description: e.g. 018b35478fa57f4b8e02f34a17ad84d5
+              type: string

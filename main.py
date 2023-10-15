@@ -3,7 +3,7 @@ from flask import jsonify
 from decouple import Config, RepositoryEnv
 from flask_socketio import SocketIO
 
-from schemas_request import StartRequest
+from schemas_request import StartRequest, ContinueRequest
 from learn import get_signals_for_timerange, parse_urls, run_test, get_stats
 
 
@@ -32,28 +32,58 @@ def validate(cls):
     { "name": "price",
       "url": { "host": "127.0.0.1", "port": 50001, "slug": "/price/range/{asset}/{interval}/{start_time}/{end_time}" } },
     { "name": "volume",
-      "url": { "host": "127.0.0.1", "port": 50001, "slug": "/price/range/{asset}/{interval}/{start_time}/{end_time}/volume" } },
+      "url": { "host": "127.0.0.1", "port": 50001, "slug": "/indicators/range/{asset}/{interval}/{start_time}/{end_time}/volume" } },
     { "name": "rsi",
-      "url": { "host": "127.0.0.1", "port": 50001, "slug": "/price/range/{asset}/{interval}/{start_time}/{end_time}/rsi" } },
+      "url": { "host": "127.0.0.1", "port": 50001, "slug": "/indicators/range/{asset}/{interval}/{start_time}/{end_time}/rsi" } },
     { "name": "macd",
-      "url": { "host": "127.0.0.1", "port": 50001, "slug": "/price/range/{asset}/{interval}/{start_time}/{end_time}/macd" } },
+      "url": { "host": "127.0.0.1", "port": 50001, "slug": "/indicators/range/{asset}/{interval}/{start_time}/{end_time}/macd" } },
     { "name": "EMA_12",
-      "url": { "host": "127.0.0.1", "port": 50001, "slug": "/price/range/{asset}/{interval}/{start_time}/{end_time}/EMA_12" } },
+      "url": { "host": "127.0.0.1", "port": 50001, "slug": "/indicators/range/{asset}/{interval}/{start_time}/{end_time}/EMA_12" } },
     { "name": "EMA_26",
-      "url": { "host": "127.0.0.1", "port": 50001, "slug": "/price/range/{asset}/{interval}/{start_time}/{end_time}/EMA_26" } }
+      "url": { "host": "127.0.0.1", "port": 50001, "slug": "/indicators/range/{asset}/{interval}/{start_time}/{end_time}/EMA_26" } }
   ]
 }
 '''
-import sys
 @validate(StartRequest)
 def start_learning(data: StartRequest):
     data = parse_urls(data)
     signals = get_signals_for_timerange(data.signals)
-    sys.stderr.write(f'signals\n{signals}\n')
-    results = run_test(signals, data.model_url, data.starting_value)
-    sys.stderr.write(f'results\n{results}\n')
-    stats = get_stats(signals, results, data.starting_value)
-    sys.stderr.write(f'stats\n{stats}\n')
+    id, results = run_test(signals, data.model_url, data.starting_value)
+    stats = get_stats(id, signals, results, data.starting_value)
+    return stats, 200
+
+
+'''
+{
+  "id": "018b35478fa57f4b8e02f34a17ad84d5",
+  "asset": "BTCUSDT",
+  "interval": "1d",
+  "starting_value": 1000000,
+  "start_time": 1503100799999,
+  "end_time": 1693180799999,
+  "model_url": { "host": "127.0.0.1", "port": 51002, "slug": "" },
+  "signals": [
+    { "name": "price",
+      "url": { "host": "127.0.0.1", "port": 50001, "slug": "/price/range/{asset}/{interval}/{start_time}/{end_time}" } },
+    { "name": "volume",
+      "url": { "host": "127.0.0.1", "port": 50001, "slug": "/indicators/range/{asset}/{interval}/{start_time}/{end_time}/volume" } },
+    { "name": "rsi",
+      "url": { "host": "127.0.0.1", "port": 50001, "slug": "/indicators/range/{asset}/{interval}/{start_time}/{end_time}/rsi" } },
+    { "name": "macd",
+      "url": { "host": "127.0.0.1", "port": 50001, "slug": "/indicators/range/{asset}/{interval}/{start_time}/{end_time}/macd" } },
+    { "name": "EMA_12",
+      "url": { "host": "127.0.0.1", "port": 50001, "slug": "/indicators/range/{asset}/{interval}/{start_time}/{end_time}/EMA_12" } },
+    { "name": "EMA_26",
+      "url": { "host": "127.0.0.1", "port": 50001, "slug": "/indicators/range/{asset}/{interval}/{start_time}/{end_time}/EMA_26" } }
+  ]
+}
+'''
+@validate(ContinueRequest)
+def continue_learning(data: ContinueRequest):
+    data = parse_urls(data)
+    signals = get_signals_for_timerange(data.signals)
+    id, results = run_test(signals, data.model_url, data.starting_value, data.id)
+    stats = get_stats(id, signals, results, data.starting_value)
     return stats, 200
 
 
